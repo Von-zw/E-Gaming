@@ -1,5 +1,6 @@
 "use server";
 
+import { getSupabase } from "@/lib/supabase";
 import { GAMES, GAME_MIN_AGE, MIN_AGE, type Game } from "./tournament";
 
 type Field = "fullName" | "gamertag" | "age" | "games" | "rules";
@@ -61,7 +62,33 @@ export async function register(
     return { status: "error", errors, values };
   }
 
-  // TODO: persist the registration (database, sheet, email, etc.)
+  const { error } = await getSupabase()
+    .from("registrations")
+    .insert({
+      full_name: values.fullName,
+      gamertag: values.gamertag,
+      age,
+      plays_fc27: games.includes("FC 27"),
+      plays_mortal_kombat: games.includes("Mortal Kombat"),
+      accepted_rules: true,
+    });
+
+  if (error) {
+    // 23505 = unique violation on the (case-insensitive) gamertag index.
+    if (error.code === "23505") {
+      return {
+        status: "error",
+        errors: { gamertag: "That gamertag is already registered" },
+        values,
+      };
+    }
+    console.error("Supabase insert failed", error);
+    return {
+      status: "error",
+      message: "We couldn't save your registration. Please try again in a moment.",
+      values,
+    };
+  }
 
   return {
     status: "success",

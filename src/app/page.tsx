@@ -12,11 +12,11 @@ const DETAILS = [
 
 export default function Home() {
   return (
-    <main className="relative flex flex-1 items-center justify-center overflow-hidden px-4 py-16 sm:px-8">
+    <main className="relative flex flex-1 items-center justify-center overflow-hidden px-4 py-12 sm:px-8 lg:py-6">
       <div aria-hidden className="backdrop" />
 
       <div className="relative grid w-full max-w-5xl grid-cols-1 items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
-        <section className="flex min-w-0 flex-col gap-8">
+        <section className="flex min-w-0 flex-col gap-8 lg:gap-6">
           <span className="inline-flex w-fit items-center gap-2 rounded-full border border-line px-3 py-1 font-mono text-xs uppercase tracking-widest text-muted">
             <span className="size-1.5 animate-pulse rounded-full bg-accent" />
             Registration open
@@ -28,7 +28,8 @@ export default function Home() {
               alt="Rev Your E-Gaming, powered by Revive"
               loading="eager"
               sizes="(min-width: 1024px) 520px, 100vw"
-              className="logo -ml-2 w-full max-w-[520px]"
+              // On desktop the logo's height follows the screen height so the page fits without scrolling.
+              className="logo -ml-2 w-full max-w-130 lg:h-[min(30vh,337px)] lg:w-auto"
             />
             <h1 className="mt-4 font-display text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl">
               E-Gaming <span className="text-gradient">2026</span>
@@ -43,7 +44,7 @@ export default function Home() {
             {DETAILS.map(({ label, value }, i) => (
               <div
                 key={label}
-                className={`border-b border-line py-4 ${i % 2 ? "pl-4 border-l" : "pr-4"}`}
+                className={`border-b border-line py-4 lg:py-3 ${i % 2 ? "pl-4 border-l" : "pr-4"}`}
               >
                 <dt className="font-mono text-[11px] uppercase tracking-widest text-muted">
                   {label}
