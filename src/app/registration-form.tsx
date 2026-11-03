@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { register, type RegistrationState } from "./actions";
-import { GAMES, GAME_MIN_AGE, MIN_AGE } from "./tournament";
+import { EntryCode, EntryCodeDialog } from "./entry-code-dialog";
+import { EVENT, GAMES, GAME_MIN_AGE, MIN_AGE } from "./tournament";
 
 const initialState: RegistrationState = { status: "idle" };
 
@@ -12,14 +13,19 @@ export function RegistrationForm() {
   const errors = state.errors ?? {};
   const values = state.values ?? {};
 
-  if (state.status === "success") {
+  if (state.status === "success" && state.entryCode) {
     return (
-      <div className="flex flex-col items-center gap-4 py-12 text-center" aria-live="polite">
+      <div className="flex flex-col items-center gap-4 py-6 text-center" aria-live="polite">
+        <EntryCodeDialog code={state.entryCode} message={state.message} />
         <div className="grid size-14 place-items-center rounded-full border border-accent/40 bg-accent/10 text-2xl text-accent">
           ✓
         </div>
         <h2 className="font-display text-2xl font-semibold tracking-wide">Slot locked in</h2>
         <p className="max-w-xs text-sm text-muted">{state.message}</p>
+        <EntryCode code={state.entryCode} />
+        <p className="text-xs text-accent-2">
+          ⚠ Keep this code safe. You&apos;ll need it to enter at {EVENT.venue} on {EVENT.date}.
+        </p>
       </div>
     );
   }

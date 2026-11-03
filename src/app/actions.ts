@@ -1,5 +1,6 @@
 "use server";
 
+import { randomInt } from "node:crypto";
 import { getSupabase } from "@/lib/supabase";
 import { GAMES, GAME_MIN_AGE, MIN_AGE, type Game } from "./tournament";
 
@@ -16,11 +17,20 @@ export type RegistrationValues = {
 export type RegistrationState = {
   status: "idle" | "error" | "success";
   message?: string;
+  /** Set on success: the code the player shows at the venue. */
+  entryCode?: string;
   errors?: Partial<Record<Field, string>>;
   values?: RegistrationValues;
 };
 
 const isGame = (value: string): value is Game => (GAMES as readonly string[]).includes(value);
+
+// No 0/O, 1/I/L so codes are easy to read out and type at the door.
+const CODE_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+const randomChunk = () =>
+  Array.from({ length: 4 }, () => CODE_ALPHABET[randomInt(CODE_ALPHABET.length)]).join("");
+/** e.g. EG26-7KQM-4XPA (must match the check constraint in supabase/migrations). */
+const generateEntryCode = () => `EG26-${randomChunk()}-${randomChunk()}`;
 
 export async function register(
   _prev: RegistrationState,
@@ -62,37 +72,47 @@ export async function register(
     return { status: "error", errors, values };
   }
 
-  const { error } = await getSupabase()
-    .from("registrations")
-    .insert({
+  const supabase = getSupabase();
+
+  // Retry with a fresh code in the (very unlikely) case a code is already taken.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const entryCode = generateEntryCode();
+    const { error } = await supabase.from("registrations").insert({
       full_name: values.fullName,
       gamertag: values.gamertag,
       age,
       plays_fc27: games.includes("FC 27"),
       plays_mortal_kombat: games.includes("Mortal Kombat"),
       accepted_rules: true,
+      entry_code: entryCode,
     });
 
-  if (error) {
-    // 23505 = unique violation on the (case-insensitive) gamertag index.
-    if (error.code === "23505") {
+    if (!error) {
+      return {
+        status: "success",
+        message: `You're in, ${values.gamertag}. Registered for ${games.join(" and ")}.`,
+        entryCode,
+        values,
+      };
+    }
+
+    // 23505 = unique violation; the message names the index that clashed.
+    if (error.code === "23505" && error.message.includes("registrations_gamertag_key")) {
       return {
         status: "error",
         errors: { gamertag: "That gamertag is already registered" },
         values,
       };
     }
+    if (error.code === "23505" && error.message.includes("registrations_entry_code_key")) continue;
+
     console.error("Supabase insert failed", error);
-    return {
-      status: "error",
-      message: "We couldn't save your registration. Please try again in a moment.",
-      values,
-    };
+    break;
   }
 
   return {
-    status: "success",
-    message: `You're in, ${values.gamertag}. Registered for ${games.join(" and ")}.`,
+    status: "error",
+    message: "We couldn't save your registration. Please try again in a moment.",
     values,
   };
 }
