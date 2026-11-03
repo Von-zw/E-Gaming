@@ -1,69 +1,67 @@
 import Image from "next/image";
+import logo from "@/assets/e-gaming-2026-logo.png";
+import { RegistrationForm } from "./registration-form";
+import { EVENT } from "./tournament";
+
+const DETAILS = [
+  { label: "Date", value: EVENT.date },
+  { label: "Venue", value: EVENT.venue },
+  { label: "Prize pool", value: EVENT.prizes },
+  { label: "Format", value: EVENT.format },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <main className="relative flex flex-1 items-center justify-center overflow-hidden px-4 py-16 sm:px-8">
+      <div aria-hidden className="backdrop" />
+
+      <div className="relative grid w-full max-w-5xl grid-cols-1 items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+        <section className="flex min-w-0 flex-col gap-8">
+          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-line px-3 py-1 font-mono text-xs uppercase tracking-widest text-muted">
+            <span className="size-1.5 animate-pulse rounded-full bg-accent" />
+            Registration open
+          </span>
+
+          <div>
             <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+              src={logo}
+              alt="Rev Your E-Gaming, powered by Revive"
+              loading="eager"
+              sizes="(min-width: 1024px) 520px, 100vw"
+              className="logo -ml-2 w-full max-w-[520px]"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <h1 className="mt-4 font-display text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl">
+              E-Gaming <span className="text-gradient">2026</span>
+            </h1>
+            <p className="mt-4 max-w-md text-base leading-7 text-muted">
+              FC 27 and Mortal Kombat. Solo players only, one champion per title.
+              Open to all skill levels — bring your best and play for gaming gear.
+            </p>
+          </div>
+
+          <dl className="grid max-w-md grid-cols-2 border-t border-line">
+            {DETAILS.map(({ label, value }, i) => (
+              <div
+                key={label}
+                className={`border-b border-line py-4 ${i % 2 ? "pl-4 border-l" : "pr-4"}`}
+              >
+                <dt className="font-mono text-[11px] uppercase tracking-widest text-muted">
+                  {label}
+                </dt>
+                <dd className="mt-1 font-display text-lg font-semibold">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        <section className="card">
+          <div className="mb-6">
+            <h2 className="font-display text-xl font-semibold tracking-wide">Player registration</h2>
+            <p className="mt-1 text-sm text-muted">128 slots per bracket. Takes a minute.</p>
+          </div>
+          <RegistrationForm />
+        </section>
+      </div>
+    </main>
   );
 }

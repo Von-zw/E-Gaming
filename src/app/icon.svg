@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- Same yellow → orange → pink fill as "E-GAMING" in the logo -->
+    <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0.15" stop-color="#ffd23f" />
+      <stop offset="0.6" stop-color="#ff7a1a" />
+      <stop offset="1" stop-color="#ff4d6d" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#121845" />
+  <!-- Juice splash drops -->
+  <circle cx="50.5" cy="14" r="5.5" fill="#ff7a1a" />
+  <circle cx="55" cy="25" r="2.6" fill="#ff7a1a" />
+  <!-- Slanted block "E" -->
+  <path
+    transform="translate(4 0) skewX(-12)"
+    fill="url(#fill)"
+    d="M20 12h24v9H31v6.5h11v9H31V43h13v9H20z"
+  />
+</svg>
