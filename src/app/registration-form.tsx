@@ -32,16 +32,30 @@ export function RegistrationForm() {
 
   return (
     <form action={formAction} noValidate className="flex flex-col gap-5">
-      <Field label="Full name" error={errors.fullName}>
-        <input
-          name="fullName"
-          autoComplete="name"
-          placeholder="e.g. Tendai Moyo"
-          defaultValue={values.fullName}
-          aria-invalid={!!errors.fullName}
-          className="input"
-        />
-      </Field>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <Field label="Full name" error={errors.fullName}>
+          <input
+            name="fullName"
+            autoComplete="name"
+            placeholder="e.g. Tendai Moyo"
+            defaultValue={values.fullName}
+            aria-invalid={!!errors.fullName}
+            className="input"
+          />
+        </Field>
+
+        <Field label="Phone / WhatsApp" error={errors.phone}>
+          <input
+            name="phone"
+            type="tel"
+            autoComplete="tel"
+            placeholder="e.g. 077 123 4567"
+            defaultValue={values.phone}
+            aria-invalid={!!errors.phone}
+            className="input"
+          />
+        </Field>
+      </div>
 
       <div className="grid gap-5 sm:grid-cols-[1fr_7rem]">
         <Field label="Gamertag" error={errors.gamertag}>

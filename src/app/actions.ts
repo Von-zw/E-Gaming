@@ -4,10 +4,11 @@ import { randomInt } from "node:crypto";
 import { getSupabase } from "@/lib/supabase";
 import { GAMES, GAME_MIN_AGE, MIN_AGE, type Game } from "./tournament";
 
-type Field = "fullName" | "gamertag" | "age" | "games" | "rules";
+type Field = "fullName" | "phone" | "gamertag" | "age" | "games" | "rules";
 
 export type RegistrationValues = {
   fullName?: string;
+  phone?: string;
   gamertag?: string;
   age?: string;
   games?: string[];
@@ -38,6 +39,8 @@ export async function register(
 ): Promise<RegistrationState> {
   const values = {
     fullName: String(formData.get("fullName") ?? "").trim().replace(/\s+/g, " "),
+    // Stored digits-only so "077 123-4567" and "0771234567" look the same to organisers.
+    phone: String(formData.get("phone") ?? "").replace(/[\s().-]/g, ""),
     gamertag: String(formData.get("gamertag") ?? "").trim(),
     age: String(formData.get("age") ?? "").trim(),
     games: formData.getAll("games").map(String),
@@ -50,6 +53,8 @@ export async function register(
 
   if (values.fullName.length < 2 || values.fullName.length > 60)
     errors.fullName = "Enter your full name";
+  if (!/^\+?\d{7,15}$/.test(values.phone))
+    errors.phone = "Enter a valid phone number";
   if (!/^[\w.-]{3,16}$/.test(values.gamertag))
     errors.gamertag = "3–16 characters: letters, numbers, . _ -";
 
@@ -79,6 +84,7 @@ export async function register(
     const entryCode = generateEntryCode();
     const { error } = await supabase.from("registrations").insert({
       full_name: values.fullName,
+      phone: values.phone,
       gamertag: values.gamertag,
       age,
       plays_fc27: games.includes("FC 27"),
