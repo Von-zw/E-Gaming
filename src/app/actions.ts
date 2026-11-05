@@ -4,11 +4,12 @@ import { randomInt } from "node:crypto";
 import { getSupabase } from "@/lib/supabase";
 import { GAMES, GAME_MIN_AGE, MIN_AGE, type Game } from "./tournament";
 
-type Field = "fullName" | "phone" | "gamertag" | "age" | "games" | "rules";
+type Field = "fullName" | "phone" | "idNumber" | "gamertag" | "age" | "games" | "rules";
 
 export type RegistrationValues = {
   fullName?: string;
   phone?: string;
+  idNumber?: string;
   gamertag?: string;
   age?: string;
   games?: string[];
@@ -33,6 +34,19 @@ const randomChunk = () =>
 /** e.g. EG26-7KQM-4XPA (must match the check constraint in supabase/migrations). */
 const generateEntryCode = () => `EG26-${randomChunk()}-${randomChunk()}`;
 
+/**
+ * Tidies a Zimbabwean national ID into 63-123456 A 42 (district, serial, check letter,
+ * district of origin), or returns null if it doesn't fit that shape. Must match the
+ * check constraint in supabase/migrations. The check letter itself isn't verified.
+ */
+const formatNationalId = (input: string) => {
+  const parts = input
+    .replace(/[\s-]/g, "")
+    .toUpperCase()
+    .match(/^(\d{2})(\d{5,7})([A-Z])(\d{2})$/);
+  return parts && `${parts[1]}-${parts[2]} ${parts[3]} ${parts[4]}`;
+};
+
 export async function register(
   _prev: RegistrationState,
   formData: FormData,
@@ -41,6 +55,7 @@ export async function register(
     fullName: String(formData.get("fullName") ?? "").trim().replace(/\s+/g, " "),
     // Stored digits-only so "077 123-4567" and "0771234567" look the same to organisers.
     phone: String(formData.get("phone") ?? "").replace(/[\s().-]/g, ""),
+    idNumber: String(formData.get("idNumber") ?? "").trim(),
     gamertag: String(formData.get("gamertag") ?? "").trim(),
     age: String(formData.get("age") ?? "").trim(),
     games: formData.getAll("games").map(String),
@@ -50,6 +65,7 @@ export async function register(
   const errors: RegistrationState["errors"] = {};
   const age = Number(values.age);
   const games = values.games.filter(isGame);
+  const idNumber = formatNationalId(values.idNumber);
 
   if (values.fullName.length < 2 || values.fullName.length > 60)
     errors.fullName = "Enter your full name";
@@ -64,8 +80,10 @@ export async function register(
     errors.age = `Players must be at least ${MIN_AGE}`;
   }
 
-  if (games.length === 0) {
-    errors.games = "Pick at least one game";
+  if (values.idNumber && !idNumber) errors.idNumber = "Use the format 63-123456 A 42";
+
+  if (games.length !== 1) {
+    errors.games = "Pick one game";
   } else if (!errors.age) {
     const tooYoung = games.find((game) => age < GAME_MIN_AGE[game]);
     if (tooYoung) errors.games = `${tooYoung} is ${GAME_MIN_AGE[tooYoung]}+ only`;
@@ -85,6 +103,7 @@ export async function register(
     const { error } = await supabase.from("registrations").insert({
       full_name: values.fullName,
       phone: values.phone,
+      id_number: idNumber,
       gamertag: values.gamertag,
       age,
       plays_fc27: games.includes("FC 27"),
@@ -98,6 +117,15 @@ export async function register(
         status: "success",
         message: `You're in, ${values.gamertag}. Registered for ${games.join(" and ")}.`,
         entryCode,
+        values,
+      };
+    }
+
+    // EG001 = on the ban list (see supabase/migrations). Never say why to the player.
+    if (error.code === "EG001") {
+      return {
+        status: "error",
+        message: "We can't accept this registration. Please contact the organisers.",
         values,
       };
     }

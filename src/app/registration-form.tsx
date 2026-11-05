@@ -58,13 +58,15 @@ export function RegistrationForm() {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-[1fr_7rem]">
-        <Field label="Gamertag" error={errors.gamertag}>
+        <Field label="National ID" error={errors.idNumber}>
           <input
-            name="gamertag"
-            autoComplete="nickname"
-            placeholder="e.g. N1ghtOwl"
-            defaultValue={values.gamertag}
-            aria-invalid={!!errors.gamertag}
+            name="idNumber"
+            autoComplete="off"
+            autoCapitalize="characters"
+            spellCheck={false}
+            placeholder="e.g. 63-123456 A 42"
+            defaultValue={values.idNumber}
+            aria-invalid={!!errors.idNumber}
             className="input"
           />
         </Field>
@@ -84,16 +86,27 @@ export function RegistrationForm() {
         </Field>
       </div>
 
+      <Field label="Gamertag" error={errors.gamertag}>
+        <input
+          name="gamertag"
+          autoComplete="nickname"
+          placeholder="e.g. N1ghtOwl"
+          defaultValue={values.gamertag}
+          aria-invalid={!!errors.gamertag}
+          className="input"
+        />
+      </Field>
+
       <fieldset>
         <legend className="label">
           Games
-          <span className="ml-2 normal-case tracking-normal text-muted/60">pick one or both</span>
+          <span className="ml-2 normal-case tracking-normal text-muted/60">pick 1</span>
         </legend>
         <div className="mt-2 grid grid-cols-2 gap-2">
           {GAMES.map((game) => (
             <label key={game} className="chip flex-col gap-0 leading-tight">
               <input
-                type="checkbox"
+                type="radio"
                 name="games"
                 value={game}
                 defaultChecked={values.games?.includes(game)}
