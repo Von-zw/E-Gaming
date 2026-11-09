@@ -35,8 +35,9 @@ export default function Home() {
               E-Gaming <span className="text-gradient">2026</span>
             </h1>
             <p className="mt-4 max-w-md text-base leading-7 text-muted">
-              FC 27 and Mortal Kombat. Solo players only, one champion per title.
-              Open to all skill levels — bring your best and play for gaming gear.
+              FC 27 and Mortal Kombat!!!. Solo players only, one champion per title.
+              Open to all skill levels bring your best and play for gaming gear.
+              see you there!
             </p>
           </div>
 
