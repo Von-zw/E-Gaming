@@ -37,7 +37,7 @@ export default function Home() {
             <p className="mt-4 max-w-md text-base leading-7 text-muted">
               FC 27 and Mortal Kombat!!!. Solo players only, one champion per title.
               Open to all skill levels bring your best and play for gaming gear.
-              see you there!
+              <span className="font-bold">SEE YOU THERE!</span>
             </p>
           </div>
 
