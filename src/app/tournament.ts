@@ -6,6 +6,9 @@ export const EVENT = {
   format: "Individuals",
 };
 
+/** All spots are taken. Set back to true (and restore the form in page.tsx) to reopen. */
+export const REGISTRATION_OPEN = false;
+
 export const GAMES =["FC 27", "Mortal Kombat"] as const;
 export type Game = (typeof GAMES)[number];
 

@@ -19,9 +19,9 @@ const chakra = Chakra_Petch({
 });
 
 export const metadata: Metadata = {
-  title: "E-Gaming 2026 | Registration",
+  title: "E-Gaming 2026 | Registration closed",
   description:
-    "Register for E-Gaming 2026, powered by Revive. FC 27 and Mortal Kombat, 28 November 2026 at Joina City.",
+    "E-Gaming 2026, powered by Revive. All spots are full. FC 27 and Mortal Kombat, 28 November 2026 at Joina City.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

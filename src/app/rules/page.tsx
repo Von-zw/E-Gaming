@@ -85,7 +85,7 @@ export default function RulesPage() {
       <article className="relative mx-auto flex w-full max-w-3xl flex-col gap-10">
         <header className="flex flex-col gap-5">
           <Link href="/" className="label w-fit transition hover:text-accent">
-            ← Back to registration
+            ← Back to home
           </Link>
           <span className="inline-flex w-fit items-center gap-2 rounded-full border border-line px-3 py-1 font-mono text-xs uppercase tracking-widest text-muted">
             <span className="size-1.5 rounded-full bg-(--accent-2)" />

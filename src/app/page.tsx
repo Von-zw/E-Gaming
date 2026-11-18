@@ -1,6 +1,5 @@
 import Image from "next/image";
 import logo from "@/assets/e-gaming-2026-logo.png";
-import { RegistrationForm } from "./registration-form";
 import { EVENT } from "./tournament";
 
 const DETAILS = [
@@ -18,8 +17,8 @@ export default function Home() {
       <div className="relative grid w-full max-w-5xl grid-cols-1 items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
         <section className="flex min-w-0 flex-col gap-8 lg:gap-6">
           <span className="inline-flex w-fit items-center gap-2 rounded-full border border-line px-3 py-1 font-mono text-xs uppercase tracking-widest text-muted">
-            <span className="size-1.5 animate-pulse rounded-full bg-accent" />
-            Registration open
+            <span className="size-1.5 rounded-full bg-muted" />
+            Registration closed
           </span>
 
           <div>
@@ -56,12 +55,24 @@ export default function Home() {
           </dl>
         </section>
 
-        <section className="card">
-          <div className="mb-6">
-            <h2 className="font-display text-xl font-semibold tracking-wide">Player registration</h2>
-            <p className="mt-1 text-sm text-muted">128 slots per bracket. Takes a minute.</p>
+        <section className="card" aria-labelledby="spots-full">
+          <h2 id="spots-full" className="font-display text-xl font-semibold tracking-wide">
+            Sorry, all spots are full
+          </h2>
+          <div className="mt-4 flex flex-col gap-4 text-sm leading-6 text-muted">
+            <p>
+              Thank you for the huge response to {EVENT.name}. Every slot in both brackets has
+              been taken, so registration is now closed and we can&apos;t accept any more players.
+            </p>
+            <p>
+              We&apos;re sorry if you missed out. We really wanted to fit everyone in, and
+              we hope to see you at the next one.
+            </p>
+            <p>
+              <span className="font-semibold text-foreground">Already registered?</span> Your
+              place is safe. Bring your entry code to {EVENT.venue} on {EVENT.date}.
+            </p>
           </div>
-          <RegistrationForm />
         </section>
       </div>
     </main>

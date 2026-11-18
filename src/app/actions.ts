@@ -2,7 +2,7 @@
 
 import { randomInt } from "node:crypto";
 import { getSupabase } from "@/lib/supabase";
-import { GAMES, GAME_MIN_AGE, MIN_AGE, type Game } from "./tournament";
+import { GAMES, GAME_MIN_AGE, MIN_AGE, REGISTRATION_OPEN, type Game } from "./tournament";
 
 type Field = "fullName" | "phone" | "idNumber" | "gamertag" | "age" | "games" | "rules";
 
@@ -51,6 +51,11 @@ export async function register(
   _prev: RegistrationState,
   formData: FormData,
 ): Promise<RegistrationState> {
+  // All spots are taken. The form is off the page, but refuse direct posts as well.
+  if (!REGISTRATION_OPEN) {
+    return { status: "error", message: "Sorry, all spots are full. Registration is closed." };
+  }
+
   const values = {
     fullName: String(formData.get("fullName") ?? "").trim().replace(/\s+/g, " "),
     // Stored digits-only so "077 123-4567" and "0771234567" look the same to organisers.
